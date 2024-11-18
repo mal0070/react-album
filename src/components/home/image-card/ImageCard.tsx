@@ -15,14 +15,47 @@ interface Props {
   data: ImageCardType;
 }
 
-function ImageCard({ data }:Props) {
-  const title = data.alternative_slugs.ko.split("-").slice(0,-1).join(" ");
+function ImageCard({ data }: Props) {
+  const title = data.alternative_slugs.ko.split('-').slice(0, -1).join(' ');
+  const addBookmark = (imageCard: ImageCardType) => {
+    console.log(imageCard);
+
+    let bookmarks: ImageCardType[] = [];
+    const getLocalStorage = localStorage.getItem('bookmark'); //null || string
+
+    if (getLocalStorage) {
+      try {
+        const parsedBookmarks = JSON.parse(getLocalStorage);
+        if (Array.isArray(parsedBookmarks)) {
+          bookmarks = parsedBookmarks;
+        } else {
+          console.error("Stored data is not an array");
+        }
+      } catch (error) {
+        console.error("Data parsing error: ", error);
+      }
+    }
+    
+    const imageExists = bookmarks.findIndex((item: ImageCardType) => item.id === imageCard.id);
+  
+    if (imageExists > -1) {
+      console.log('Data is already saved.');
+    } else {
+      bookmarks.push(imageCard);
+      localStorage.setItem('bookmark', JSON.stringify(bookmarks));
+      console.log('Data has been saved.');
+    }
+  };
 
   return (
     <div className="flex flex-col justify-between space-y-3 w-64 h-64 cursor-pointer">
       <div className="relative flex flex-col gap-3">
-        <img src={`${data.urls.small}`} alt='이미지'className='w-full h-[200px] rounded-xl' />
-       {/*<Skeleton className="w-full h-[250px] rounded-xl" />*/}
+        <img
+          src={`${data.urls.small}`}
+          alt="이미지"
+          className="w-full h-[200px] rounded-xl"
+        />
+        {/*<Skeleton className="w-full h-[250px] rounded-xl" />*/}
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -48,17 +81,22 @@ function ImageCard({ data }:Props) {
               </div>
               <div>사진 설명</div>
             </div>
-            <div></div>
+            <div>
+              <Button variant="secondary" onClick={() => addBookmark(data)}>
+                Bookmark
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
         <small className="text-sm font-semibold leading-none">
-        {`${title}`}
+          {`${title}`}
         </small>
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-1 text-sm">
-            <span className="leading-7">게시일:</span>{data.created_at.split("T")[0]}
+            <span className="leading-7">게시일:</span>
+            {data.created_at.split('T')[0]}
           </div>
           <div className="flex items-center gap-1 text-sm">
             <Heart className="h-[14px] w-[14px] mt-[2px] text-rose-500 fill=#e11d48"></Heart>
