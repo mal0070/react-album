@@ -16,10 +16,12 @@ interface Props {
 }
 
 function ImageCard({ data }:Props) {
+  const title = data.alternative_slugs.ko.split("-").slice(0,-1).join(" ");
+
   return (
     <div className="flex flex-col justify-between space-y-3 w-64 h-64 cursor-pointer">
       <div className="relative flex flex-col gap-3">
-        <img src={`${data.urls.small}`} alt='이미지'className='w-full h-[250px] rounded-xl' />
+        <img src={`${data.urls.small}`} alt='이미지'className='w-full h-[200px] rounded-xl' />
        {/*<Skeleton className="w-full h-[250px] rounded-xl" />*/}
         <Dialog>
           <DialogTrigger asChild>
@@ -35,7 +37,7 @@ function ImageCard({ data }:Props) {
               <DialogTitle>이미지 상세 정보</DialogTitle>
               <DialogDescription>
                 <small className="w-full gap-1 text-s font-medium line-clamp-2">
-                  {data.alternative_slugs.ko.split("-").join(" ")}
+                  {`${title}`}
                 </small>
               </DialogDescription>
             </DialogHeader>
@@ -50,7 +52,7 @@ function ImageCard({ data }:Props) {
           </DialogContent>
         </Dialog>
         <small className="text-sm font-semibold leading-none">
-          조회된 이미지에 대한 설명입니다.
+        {`${title}`}
         </small>
       </div>
       <div className="space-y-2">
