@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import navJson from './nav.json';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styles from './nav.module.scss';
+import { searchValueAtom } from '@/store';
 
 interface Nav {
   index: number;
@@ -12,7 +14,21 @@ interface Nav {
 }
 
 function Nav() {
+  const location = useLocation();
+  const [searchValue, setSearchValue] = useAtom(searchValueAtom);
   const [navItem, setNavItem] = useState<Nav[]>(navJson);
+
+  useEffect(()=> {
+    navItem.forEach((nav: Nav)=> {
+      nav.isActive = false;
+      
+      if(nav.path === location.pathname || location.pathname.includes(nav.path)){
+        nav.isActive = true;
+        setSearchValue(nav.searchValue);
+      }
+    });
+    setNavItem([...navItem]);
+  },[location.pathname])
 
   const navLinks = navItem.map((nav: Nav) => {
     return (
