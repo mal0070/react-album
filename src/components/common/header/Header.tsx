@@ -1,7 +1,7 @@
 import { Separator } from '@radix-ui/react-separator';
 import styles from './header.module.scss';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui';
+import { buttonVariants } from '@/components/ui';
 import { BookMarked } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui';
 //모듈은 사용할 이름을 정해주어야함
@@ -11,7 +11,7 @@ function Header() {
   return (
     <header className={styles.header}>
       <div className={styles[`header__logobox`]}>
-        <Link to={'/bookmark'}>
+        <Link to={'/'}>
           <img
             src="src/assets/logo.svg"
             className={styles.header__logobox__logo}
@@ -19,10 +19,9 @@ function Header() {
         </Link>
       </div>
       <div className={styles.header__userbox}>
-        <Button variant="secondary">
-          <BookMarked />
-          북마크
-        </Button>
+        <Link className={buttonVariants({ variant: "secondary" })} to={'/bookmark'}>
+        <BookMarked />북마크
+        </Link>
         <Separator orientation="vertical" />
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
