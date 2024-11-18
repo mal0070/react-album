@@ -35,7 +35,7 @@ function ImageCard({ data }:Props) {
               <DialogTitle>이미지 상세 정보</DialogTitle>
               <DialogDescription>
                 <small className="w-full gap-1 text-s font-medium line-clamp-2">
-                  {data.alternative_slugs.ko.replace('-',' ')}
+                  {data.alternative_slugs.ko.split("-").join(" ")}
                 </small>
               </DialogDescription>
             </DialogHeader>

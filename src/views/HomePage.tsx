@@ -3,15 +3,39 @@ import { PagingFooter } from '@/components/common/paging-footer/PagingFooter';
 import { ImageCard } from '@/components/home/image-card';
 import { SearchBar } from '@/components/ui';
 import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ImageCardType } from '@/types';
+import { useAtom } from 'jotai';
+import { fetchAPI, pageAtom, searchValueAtom } from '@/store';
 
 function HomePage() {
-  const [images, setImages] = useState([]);
   const { toast } = useToast();
 
-  const fetchAPI = async () => {
+  const [searchValue] = useAtom(searchValueAtom);
+  const [page] = useAtom(pageAtom);
+
+  const [images, setImages] = useState([]);
+
+  const fetchImages = useCallback(async () => {
+    try {
+      const res = await fetchAPI(searchValue, page);
+      
+      if (res.status === 200 && res.data) {
+        setImages(res.data.results);
+        console.log(res.data);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'API 호출 실패',
+          description: 'API 호출을 위한 필수 파라미터 값을 체크해보세요!',
+        });
+      }  
+    } catch(error) {
+      console.log(error);
+    }
+  }, [searchValue, page, toast]); //필요한 의존성들만 주입
+
+  /*const fetchAPI = async () => {
     const API_KEY = 'gcyfsAL2xYOU7tSWNxnPBikSgoeze88F9cdW2zNwjNM';
     const BASE_URL = 'https://api.unsplash.com/search/photos';
 
@@ -36,11 +60,11 @@ function HomePage() {
     } catch (error) {
       console.log(error);
     }
-  };
+  };*/
 
   useEffect(() => {
-    fetchAPI();
-  }, []);
+    fetchImages();
+  }, [fetchImages]); //fetchImages가 변경될 때만 실행
 
   return (
     <div className="page">
